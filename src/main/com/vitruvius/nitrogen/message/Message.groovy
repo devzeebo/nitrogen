@@ -13,7 +13,7 @@ class Message {
 	static void send(String messageType, def message, MessageConfiguration config, Closure callback = null) {
 
 		config.filterMap.values().findAll { it.actions.containsKey(messageType) }.each {
-			def result = it."on${messageType.capitalize()}"(message)
+			def result = it.actions[messageType].invoke(it, message)
 			callback?.call(result)
 		}
 	}

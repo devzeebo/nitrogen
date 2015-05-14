@@ -1,5 +1,7 @@
 package com.vitruvius.nitrogen.message
 
+import java.lang.reflect.Method
+
 /**
  * User: Eric
  * Date: 5/13/2015
@@ -36,18 +38,20 @@ class MessageConfiguration {
 		// execute the config script
 		script.run()
 
+		if (!defaultConfig) {
+			defaultConfig = config
+		}
+
 		return config
 	}
 
 	def registerFilter(Class filter) {
+
 		def instance = filter.newInstance()
 		instance.metaClass.actions = filter.methods.findAll { it.name.startsWith('on') }.collectEntries {
-			[it.name, it]
-		}
-		filterMap[filter.simpleName] = instance
-	}
+			["${it.name[2].toLowerCase()}${it.name.substring(3)}".toString(), it]
+		} as Map<String, Method>
 
-	public static void main(String[] args) {
-		println loadConfiguration('testConfig.groovy').filterMap.values()*.actions
+		filterMap[filter.simpleName] = instance
 	}
 }
