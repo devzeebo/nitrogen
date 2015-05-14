@@ -54,4 +54,8 @@ class MessageConfiguration {
 
 		filterMap[filter.simpleName] = instance
 	}
+
+	void unregisterFilter(Class filter) {
+		filterMap.remove filter.simpleName
+	}
 }
