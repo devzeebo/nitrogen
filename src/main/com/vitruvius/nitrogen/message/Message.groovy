@@ -12,9 +12,11 @@ class Message {
 
 	static void send(String messageType, def message, MessageConfiguration config, Closure callback = null) {
 
-		config.filterMap.values().findAll { it.actions.containsKey(messageType) }.each {
-			def result = it.actions[messageType].invoke(it, message)
-			callback?.call(result)
+		config.filterMap.values().findAll { it.actions.containsKey(messageType) }.each { filter ->
+			Thread.startDaemon {
+				def result = filter.actions[messageType].invoke(filter, message)
+				callback?.call(result)
+			}
 		}
 	}
 }
